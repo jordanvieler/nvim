@@ -15,7 +15,9 @@ local options = {
   showmode = false,
   termguicolors = true,
   numberwidth = 4,
-  signcolumn = 'yes'
+  signcolumn = 'yes',
+  completeopt = { 'menuone', 'noinsert', 'noselect' }
+
 }
 
 for option, value in pairs(options) do

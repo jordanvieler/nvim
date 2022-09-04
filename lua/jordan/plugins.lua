@@ -43,7 +43,7 @@ return packer.startup(function(use)
   use "L3MON4D3/LuaSnip"
   use "saadparwaiz1/cmp_luasnip"
 
-  -- treesitter
+  -- treesitter stuff
   use {
     "nvim-treesitter/nvim-treesitter",
     run = ":TSUpdate"

@@ -9,10 +9,10 @@ if not cmp then
   return
 end
 
--- completion options for insert mode
-vim.opt.completeopt = { 'menu', 'menuone', 'noinsert' }
-
 cmp.setup {
+  --completion = {
+  --  autocomplete = false
+  --},
   snippet = {
     expand = function(args)
       require('luasnip').lsp_expand(args.body)
@@ -29,15 +29,18 @@ cmp.setup {
     ['<C-y>'] = cmp.mapping.confirm({
       behavior = cmp.ConfirmBehavior.Insert,
       select = true
-    })
+    }),
   }),
   sources = cmp.config.sources {
     { name = 'nvim_lsp' },
-    { name = 'path' },
+    -- { name = 'path' },
     { name = 'luasnip' },
-    { name = 'buffer', keyword_length = 5 }
+    -- { name = 'buffer', keyword_length = 5 }
   },
   --experimental = {
   --  ghost_text = true
   --}
 }
+
+-- map cmp to omnifunc completion
+vim.keymap.set('i', '<C-x><C-o>', cmp.complete)
