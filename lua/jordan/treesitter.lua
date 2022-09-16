@@ -4,7 +4,7 @@ if not status_ok then
 end
 
 configs.setup {
-  ensure_install = {'lua'},
+  ensure_install = {'bash', 'lua', 'python', 'yaml'},
   sync_install = false,
   ignore_install = { '' },
   highlight = {
