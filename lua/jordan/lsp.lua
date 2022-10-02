@@ -81,3 +81,8 @@ lspc.sumneko_lua.setup {
     }
   }
 }
+
+-- latex
+lspc.texlab.setup{
+  filetypes = { 'tex', 'bib', }
+}
