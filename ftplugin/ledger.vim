@@ -1,3 +1,3 @@
-set complete+=k~/new_finances/accounts.ledger
-set dictionary=~/new_finances/accounts.ledger
+set complete+=k~/finances/myledger/accounts.ledger
+set dictionary=~/finances/myledger/accounts.ledger
 set iskeyword+=:

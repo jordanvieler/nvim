@@ -42,6 +42,7 @@ local function on_attach()
   vim.keymap.set('n', '<leader>dn', vim.diagnostic.goto_next, { buffer = 0 })
   -- goto prev diagnostic
   vim.keymap.set('n', '<leader>dp', vim.diagnostic.goto_prev, { buffer = 0 })
+  print('Fuck you')
   -- open floating diagnostics
   -- function to open_floating diagnostic with config
   local function open_diagnostic()
