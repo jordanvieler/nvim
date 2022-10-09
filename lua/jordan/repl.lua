@@ -37,21 +37,26 @@ local function stringIsEmpty(input_string)
   end
 end
 
+local function cleanDataForIPython(data)
+  local clean_table = {}
+  for _, line in pairs(data) do
+    if not stringIsEmpty(line) then
+      table.insert(clean_table, line)
+    end
+  end
+  return clean_table
+end
+
 local function sendToTmux(data, panel_id)
   -- Takes a table data(lines) and tmux panel id, and sends the keys to tmux with necessary \r
   -- remove null or blank lines from data table, escape stuff that needs escaping
-  for i, line in pairs(data) do
-    if stringIsEmpty(line) then
-      table.remove(data, i)
-    end
-  end
-  -- end data prep
-  local num_lines = #data
+  local clean_data = cleanDataForIPython(data)
+  local num_lines = #clean_data
   if num_lines <= 0 then
     return 1
   else
     if num_lines == 1 then
-      local line = data[1]
+      local line = clean_data[1]
       -- escape double quotes for tmux send keys quotes. 
       -- TODO REFACTOR this block that is repeated
       line = string.gsub(line, '"', '\\"')
@@ -63,7 +68,7 @@ local function sendToTmux(data, panel_id)
       -- we have multiple lines to send
       -- send C-o to ipython to specify multiline
       os.execute('tmux send-keys -t '..panel_id..' C-o')
-      for _, line in pairs(data) do
+      for _, line in pairs(clean_data) do
         line = string.gsub(line, '"', '\\"')
         os.execute('tmux send-keys -t '..panel_id..' "'..line..'"')
         os.execute('tmux send-keys -t '..panel_id..' Enter')
