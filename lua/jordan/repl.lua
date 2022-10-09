@@ -29,24 +29,49 @@ local function getCell(start_delim, end_delim)
 
 end
 
+local function stringIsEmpty(input_string)
+  if string.find(input_string, '^ *$') then
+    return true
+  else
+    return false
+  end
+end
+
 local function sendToTmux(data, panel_id)
   -- Takes a table data(lines) and tmux panel id, and sends the keys to tmux with necessary \r
-  local num_lines = #data
-  if num_lines == 0 then
-    return 1
-  elseif num_lines == 1 then
-    local line = data[1]
-    os.execute('tmux send-keys -t '..panel_id..' "'..line..'" Enter')
-    return 0
-
-  elseif num_lines > 1 then
-    -- send C-o to ipython to specify multiline
-    os.execute('tmux send-keys -t '..panel_id..' C-o')
-    for _, line in pairs(data) do
-      os.execute('tmux send-keys -t '..panel_id..' "'..line..'" Enter')
+  -- remove null or blank lines from data table, escape stuff that needs escaping
+  for i, line in pairs(data) do
+    if stringIsEmpty(line) then
+      table.remove(data, i)
     end
-    os.execute('tmux send-keys -t 1 Enter')
-    return 0
+  end
+  -- end data prep
+  local num_lines = #data
+  if num_lines <= 0 then
+    return 1
+  else
+    if num_lines == 1 then
+      local line = data[1]
+      -- escape double quotes for tmux send keys quotes. 
+      -- TODO REFACTOR this block that is repeated
+      line = string.gsub(line, '"', '\\"')
+      os.execute('tmux send-keys -t '..panel_id..' -l "'..line..'"')
+      os.execute('tmux send-keys -t '..panel_id..' Enter')
+      return 0
+
+    else
+      -- we have multiple lines to send
+      -- send C-o to ipython to specify multiline
+      os.execute('tmux send-keys -t '..panel_id..' C-o')
+      print(data[5])
+      for _, line in pairs(data) do
+        line = string.gsub(line, '"', '\\"')
+        os.execute('tmux send-keys -t '..panel_id..' "'..line..'"')
+        os.execute('tmux send-keys -t '..panel_id..' Enter')
+      end
+      os.execute('tmux send-keys -t 1 Enter')
+      return 0
+    end
   end
 end
 
