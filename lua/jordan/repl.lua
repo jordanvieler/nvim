@@ -63,7 +63,6 @@ local function sendToTmux(data, panel_id)
       -- we have multiple lines to send
       -- send C-o to ipython to specify multiline
       os.execute('tmux send-keys -t '..panel_id..' C-o')
-      print(data[5])
       for _, line in pairs(data) do
         line = string.gsub(line, '"', '\\"')
         os.execute('tmux send-keys -t '..panel_id..' "'..line..'"')
