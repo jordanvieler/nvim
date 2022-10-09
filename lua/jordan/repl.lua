@@ -1,3 +1,5 @@
+-- TODO before further modifications: Refactor now that you know what you want and more lua. See lua.org guide
+-- TODO Something to run a script and drop into python repl
 local function getCellLines(start_delim,  end_delim)
   -- gets the line numbers of the current or cell aboves deliminators
   -- get the current cursor position to jump back to later
@@ -30,7 +32,6 @@ end
 local function sendToTmux(data, panel_id)
   -- Takes a table data(lines) and tmux panel id, and sends the keys to tmux with necessary \r
   local num_lines = #data
-  print(vim.inspect(data))
   if num_lines == 0 then
     return 1
   elseif num_lines == 1 then
@@ -49,15 +50,26 @@ local function sendToTmux(data, panel_id)
   end
 end
 
-function MakeCellFunctions(start_delim, end_delim)
+function MakeREPLFunctions(start_delim, end_delim)
   --takes start_delim and end_delim and returns cell functions with start_delim and end_delim bound
+  local tmux_id
+
+  local function getTmuxId()
+    vim.ui.input({prompt = 'Enter Target Tmux Panel ID: '}, function (input) tmux_id = input end)
+  end
+
+  vim.api.nvim_create_user_command('SetTMuxTarget', getTmuxId, {})
+
   local function sendCellToTmux()
     --[[
     Gets a cell under the cursor and then sends cell contents, line by line to a tmux pane.
     ]]--
     --TODO: prompt user for -t value when first called in session
+    if tmux_id == nil then
+      getTmuxId()
+    end
     local cell = getCell(start_delim, end_delim)
-    if sendToTmux(cell, 1) == 1 then
+    if sendToTmux(cell, tmux_id) == 1 then
       print('No lines were received to send.')
       return 1
     end
@@ -65,14 +77,14 @@ function MakeCellFunctions(start_delim, end_delim)
 
   local function makeCell()
     local start_line, end_line = unpack(getCellLines(start_delim, end_delim))
-    local cell_frame = {'', start_delim, '', end_delim, ''}
-    if start_line > 0 and end_line > 0 then
-      vim.fn.append(end_line, cell_frame)
+    local current_line = vim.fn.line('.')
+    local on_cell = ((start_line > 0 and end_line > 0) and (start_line <= current_line and current_line <= end_line))
+    if on_cell then
+      vim.fn.append(end_line, {'', start_delim, '', end_delim})
       vim.fn.cursor({end_line+3, 1})
     else
-      local current_line = vim.fn.line('.')
-      vim.fn.append(current_line, cell_frame)
-      vim.fn.cursor({current_line+3, 1})
+      vim.fn.append(current_line, {start_delim, '', end_delim, ''})
+      vim.fn.cursor({current_line+2, 1})
     end
     return 0
   end
@@ -86,19 +98,26 @@ function MakeCellFunctions(start_delim, end_delim)
     makeCell()
     return 0
   end
-  local cell_functions = {}
-  cell_functions['sendCellToTmux'] = sendCellToTmux
-  cell_functions['makeCell'] = makeCell
-  cell_functions['sendAndMakeCell'] = sendAndMakeCell
 
-  return cell_functions
+  local function sendVisualSelection()
+    if tmux_id == nil then
+      getTmuxId()
+    end
+    -- yank to visual selection into 9 register,
+    vim.fn.feedkeys('"9y', 'x')
+    -- send the register to tmux
+    local yanked_contents = vim.fn.getreg('9')
+    local lines = vim.fn.split(yanked_contents, '\n')
+    sendToTmux(lines, tmux_id)
+  end
+
+  local repl_functions = {}
+  repl_functions['sendCellToTmux'] = sendCellToTmux
+  repl_functions['makeCell'] = makeCell
+  repl_functions['sendAndMakeCell'] = sendAndMakeCell
+  repl_functions['sendVisualSelection'] = sendVisualSelection
+
+  return repl_functions
+
 end
 
-function SendVisualSelection()
-  -- yank to visual selection into 9 register,
-  vim.fn.feedkeys('"9y', 'x')
-  -- send the register to tmux
-  local yanked_contents = vim.fn.getreg('9')
-  local lines = vim.fn.split(yanked_contents, '\n')
-  sendToTmux(lines, 1)
-end
