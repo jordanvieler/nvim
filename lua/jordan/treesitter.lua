@@ -5,7 +5,7 @@ end
 
 configs.setup {
   ensure_install = {'bash', 'lua', 'python', 'yaml'},
-  sync_install = false,
+  sync_install = true,
   ignore_install = { '' },
   highlight = {
     enable = true,

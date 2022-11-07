@@ -5,6 +5,3 @@ require "jordan.colorscheme"
 require "jordan.lsp"
 require "jordan.cmp"
 require "jordan.treesitter"
-
---repl stuff
-require "jordan.repl"

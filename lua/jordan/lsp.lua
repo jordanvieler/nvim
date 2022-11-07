@@ -6,7 +6,7 @@ if not status_ok then
 end
 
 -- check that cmp_nvim_lsp is installed
-local status_ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+local _, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
 if not status_ok then
   print('failed to require cmp_nvim_lsp')
   return
@@ -59,7 +59,7 @@ end
 
 -- update capabilities from cmp_nvim_lsp
 -- pass this to language servers
-local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = cmp_nvim_lsp.default_capabilities()
 
 -- configure lsps
 -- lua
@@ -82,7 +82,19 @@ lspc.sumneko_lua.setup {
   }
 }
 
+-- python
+lspc.pyright.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
+}
+
 -- latex
 lspc.texlab.setup{
   filetypes = { 'tex', 'bib', }
+}
+
+-- dockerfile
+lspc.dockerls.setup{
+  capabilities=capabilities,
+  on_attach=on_attach
 }

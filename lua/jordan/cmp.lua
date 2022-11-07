@@ -3,11 +3,19 @@ if not status_ok then
   return
 end
 
+local status_ok, cmp_neurogenesis = pcall(require, 'cmp_neurogenesis')
+if not status_ok then
+  vim.notify('Could not load module cmp_neurogenesis')
+  return
+end
+
 -- check nil for cmp. Thanks LSP!
 if not cmp then
   print('cmp returned nil')
   return
 end
+
+cmp_neurogenesis.setup({trigger_char='@', brain_path='/home/jordan/brain'})
 
 cmp.setup {
   --completion = {
@@ -36,10 +44,8 @@ cmp.setup {
     -- { name = 'path' },
     { name = 'luasnip' },
     -- { name = 'buffer', keyword_length = 5 }
+    { name = 'neurogenesis'}
   },
-  --experimental = {
-  --  ghost_text = true
-  --}
 }
 
 -- map cmp to omnifunc completion

@@ -1,6 +1,9 @@
 -- set colorscheme
 vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
+vim.o.termguicolors = true
 require("catppuccin").setup {
+  term_colors = true,
+  background = false,
   integrations = {
     treesitter = true,
     ts_rainbow = true,

@@ -11,12 +11,13 @@ local options = {
   sidescrolloff = 4,
   expandtab = true,
   shiftwidth = 4,
-  laststatus = 3,
+  laststatus = 3, --sets 1 global statusline
   showmode = false,
   termguicolors = true,
   numberwidth = 4,
   signcolumn = 'yes',
-  completeopt = { 'menuone', 'noinsert', 'noselect' }
+  completeopt = { 'menuone', 'noinsert', 'noselect' },
+  winbar = '%=%m %f'
 
 }
 
@@ -25,6 +26,7 @@ for option, value in pairs(options) do
 end
 
 vim.cmd [[highlight WinSeparator guibg=None]]
+
 
 -- netrw configuration
 vim.cmd [[let g:netrw_banner = 0]]
