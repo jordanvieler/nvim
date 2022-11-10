@@ -31,6 +31,7 @@ return packer.startup(function(use)
 
   -- catpuccin colorscheme
   use { "catppuccin/nvim", as = "catppuccin" }
+  use {"wuelnerdotexe/vim-enfocado"}
 
   -- lsp
   use "neovim/nvim-lspconfig"
@@ -50,9 +51,9 @@ return packer.startup(function(use)
   }
   use "p00f/nvim-ts-rainbow"
   -- local dev plugins
-  use '/home/jordan/nvim_plugins/neurogenesis.nvim'
-  use '/home/jordan/nvim_plugins/cmp-neurogenesis'
-  use '/home/jordan/nvim_plugins/cyto.nvim'
+  use 'jordanvieler/cyto.nvim'
+  --use '/home/jordan/nvim_plugins/cmp-neurogenesis'
+  --use '/home/jordan/nvim_plugins/cyto.nvim'
   -- Automatically set up your configuration after cloning packer.nvim
   if PACKER_BOOTSTRAP then
     require('packer').sync()
