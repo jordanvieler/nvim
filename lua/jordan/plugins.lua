@@ -31,6 +31,7 @@ return packer.startup(function(use)
 
   -- catpuccin colorscheme
   use { "catppuccin/nvim", as = "catppuccin" }
+  -- enfocado colorscheme
   use {"wuelnerdotexe/vim-enfocado"}
 
   -- lsp
@@ -50,6 +51,13 @@ return packer.startup(function(use)
     run = ":TSUpdate"
   }
   use "p00f/nvim-ts-rainbow"
+  -- git signs
+  use {
+    'lewis6991/gitsigns.nvim',
+    config = function()
+      require('gitsigns').setup()
+    end
+  }
   -- local dev plugins
   use 'jordanvieler/cyto.nvim'
   --use '/home/jordan/nvim_plugins/cmp-neurogenesis'
