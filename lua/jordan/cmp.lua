@@ -3,24 +3,15 @@ if not status_ok then
   return
 end
 
-local status_ok, cmp_neurogenesis = pcall(require, 'cmp_neurogenesis')
-if not status_ok then
-  vim.notify('Could not load module cmp_neurogenesis')
-  return
-end
 
--- check nil for cmp. Thanks LSP!
+-- check nil for cmp.
 if not cmp then
   print('cmp returned nil')
   return
 end
 
-cmp_neurogenesis.setup({trigger_char='@', brain_path='/home/jordan/brain'})
 
 cmp.setup {
-  --completion = {
-  --  autocomplete = false
-  --},
   snippet = {
     expand = function(args)
       require('luasnip').lsp_expand(args.body)
@@ -41,10 +32,7 @@ cmp.setup {
   }),
   sources = cmp.config.sources {
     { name = 'nvim_lsp' },
-    -- { name = 'path' },
-    { name = 'luasnip' },
-    -- { name = 'buffer', keyword_length = 5 }
-    { name = 'neurogenesis'}
+    { name = 'luasnip' }
   },
 }
 

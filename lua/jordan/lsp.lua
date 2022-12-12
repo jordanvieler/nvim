@@ -1,16 +1,20 @@
 -- check that lspconfig is installed and get it
-local status_ok, lspc = pcall(require, 'lspconfig')
-if not status_ok then
+local lspc_ok, lspc = pcall(require, 'lspconfig')
+if not lspc_ok then
   print('failed to require lspconfig')
   return
 end
 
 -- check that cmp_nvim_lsp is installed
-local _, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
-if not status_ok then
+local cmp_nvim_lsp_ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+if not cmp_nvim_lsp_ok then
   print('failed to require cmp_nvim_lsp')
   return
 end
+
+-- update capabilities from cmp_nvim_lsp
+-- pass this to language servers
+local capabilities = cmp_nvim_lsp.default_capabilities()
 
 -- configure diagnostics
 vim.diagnostic.config {
@@ -26,7 +30,7 @@ vim.diagnostic.config {
     prefix = ''
   }
 }
--- local os_type = vim.loop.os_uname().sysname
+
 local function on_attach()
   -- setup keymaps for common lsp functionality
   -- setup vim omnifunc style completion for this buffer
@@ -57,9 +61,6 @@ local function on_attach()
   -- vim.cmd [[command Format :lua vim.lsp.buf.formatting()<cr>]]
 end
 
--- update capabilities from cmp_nvim_lsp
--- pass this to language servers
-local capabilities = cmp_nvim_lsp.default_capabilities()
 
 -- configure lsps
 -- lua
@@ -83,9 +84,38 @@ lspc.sumneko_lua.setup {
 }
 
 -- python
-lspc.pyright.setup{
+lspc.pylsp.setup{
   capabilities = capabilities,
   on_attach = on_attach,
+  settings = {
+    pylsp = {
+      configurationSources = {'flake8'},
+      plugins = {
+	pycodestyle = {
+	  enabled = false
+	},
+	mcabe = {
+	  enabled = false
+	},
+	pyflakes = {
+	  enabled = false
+	},
+	flake8 = {
+	  enabled = true
+	},
+	black = {
+	  enabled = false
+	},
+	autopep8 = {
+	  enabled = false
+	},
+	yapf = {
+	  enabled = true
+	}
+
+      }
+    }
+  }
 }
 
 -- latex
